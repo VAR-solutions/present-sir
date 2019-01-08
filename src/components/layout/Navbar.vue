@@ -85,7 +85,7 @@ export default {
     },
     login(){
       const provider = new firebase.auth.GoogleAuthProvider()
-      firebase.auth().signInWithPopup(provider).then((result) => {
+      firebase.auth().signInWithRedirect(provider).then((result) => {
         this.$router.push({ name: 'Dashboard' })
       }).catch(err => {
         this.feedback = err.message
