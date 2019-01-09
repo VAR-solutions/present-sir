@@ -3,9 +3,11 @@ import Router from 'vue-router'
 import Dashboard from '@/components/Dashboard'
 import Home from '@/components/Home'
 import firebase from 'firebase/app'
+import 'firebase/auth'
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -15,10 +17,7 @@ const router = new Router({
     {
       path: '/dashboard',
       name: 'Dashboard',
-      component: Dashboard,
-      meta: {
-        requiresAuth: true
-      }
+      component: Dashboard
     }
   ]
 })
