@@ -25,13 +25,13 @@
           <div class="background">
             <img src="../../assets/texture.jpg">
           </div>
-          <a href="#user">
+          <a>
             <img class="circle" :src="user.photoURL">
           </a>
-          <a href="#name">
+          <a>
             <span class="name">{{user.displayName}}</span>
           </a>
-          <a href="#email">
+          <a>
             <span class="name">{{ user.email }}</span>
           </a>
         </div>
