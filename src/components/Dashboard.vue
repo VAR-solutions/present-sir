@@ -5,39 +5,33 @@
       <div v-for="(sub,index) in subjects" :key="index" class="col s12 m12 l3">
         <div class="card">
           <div class="card-content white-text">
-            <!-- Dropdown Structure -->
-            <ul id="dropdown1" class="dropdown-content">
-
-              <li>
-                <span>
-                <i class="material-icons">edit</i>
-                </span>
-              </li>
-              <li>
-
-              <span>
-                <i class="material-icons">delete</i>
-              </span>
-
-              </li>
-            </ul>
-
             <div class="row title">
-              <div class="col m11 s11 title-name">
-                <span class="card-title">{{sub.name}}</span>
+              <div class="col m10 s10 title-name">
+                <span class="card-title">{{sub.subNick}}</span>
               </div>
-              <div class="col m1 s1 titlebtn">
-                <a class="dropdown-trigger" href="/dashboard" data-target="dropdown1">
-                  <i class="material-icons white-text">more_vert</i>
-                </a>
+              <div class="col m2 s2 titlebtn right">
+                <router-link :to="{ name: 'EditSubject', params: { sub_id : sub.id}}">
+                  <i class="material-icons white-text">edit</i>
+                </router-link>&nbsp; &nbsp;
+                <i class="material-icons delete" @click="delSubject(sub.id)">delete</i>
               </div>
             </div>
 
-            <p>Attendance: {{sub.attendance}}</p>
+            <p>Attendance: 75%</p>
             <p>Present: 6</p>
           </div>
           <div class="card-action">
             <button class="btn">UPDATE ATTENDANCE</button>
+          </div>
+        </div>
+      </div>
+      <div class="col l3 m12 s12">
+        <div class="card hoverable">
+          <div class="card-content center blankcard">
+            <router-link :to="{ name: 'AddSubject', params: {userdata: this.name} }">
+              <i class="material-icons addcard">add</i>
+              <p class="white-text">Add Subject</p>
+            </router-link>
           </div>
         </div>
       </div>
@@ -46,41 +40,45 @@
 </template>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    var elems = document.querySelectorAll('.dropdown-trigger');
-    var instances = M.Dropdown.init(elems, "left");
-  });
-
+import db from "@/firebase/init";
+import firebase from "firebase/app";
+import AddSubject from "@/components/AddSubject";
 
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
+  props: ["name"],
+  components: {
+    AddSubject
+  },
   data() {
     return {
-      subjects: [
-        {
-          name: "DBMS",
-          attendance: "80%"
-        },
-        {
-          name: "OS",
-          attendance: "60%"
-        },
-        {
-          name: "OOP",
-          attendance: "72%"
-        },
-        {
-          name: "OOP",
-          attendance: "72%"
-        },
-        {
-          name: "OOP",
-          attendance: "72%"
-        }
-      ]
+      subjects: []
     };
   },
   methods: {
+    delSubject(id) {
+      db.collection("subjects")
+        .doc(id)
+        .delete()
+        .then(() => {
+          this.subjects = this.subjects.filter(subject => {
+            return subject.id != id;
+          });
+        });
+    }
+  },
+  created() {
+    //fetch data from firestone
+    let ref = db.collection("subjects");
+    ref.get().then(snapshot => {
+      snapshot.forEach(doc => {
+        if (doc.data().userid == this.name.uid) {
+          let subject = doc.data();
+          subject.id = doc.id;
+          this.subjects.push(subject);
+        }
+      });
+    });
   }
 };
 </script>
@@ -90,6 +88,7 @@ export default {
 .home {
   margin-top: 2%;
 }
+
 .title {
   margin: 0;
   padding: 0;
@@ -130,16 +129,26 @@ export default {
   margin: 0;
   padding: 0;
 }
-.dropdown-content{
-  top: 1.6%;
+.blankcard {
+  padding: 8%;
+  padding-bottom: 12%;
+  margin: 0;
+  background-color: rgb(24, 103, 192);
 }
-.dropdown-content li{
-  text-align: center;
-
+.blankcard p{
+  font-size: 1.5em;
+  margin: 0;
+  padding: 0;
 }
-.dropdown-content li>span{
-  color: rgb(24, 103, 192);
+/* .addcard:hover{
+  zoom: 1.1;
+} */
+.addcard {
+  font-size: 7em;
+  color: white;
+  padding: 1%;
 }
-
-
+.delete {
+  cursor: pointer;
+}
 </style>
