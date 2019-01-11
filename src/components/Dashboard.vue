@@ -6,10 +6,10 @@
         <div class="card">
           <div class="card-content white-text">
             <div class="row title">
-              <div class="col m10 s10 title-name">
+              <div class="col m9 s9 title-name">
                 <span class="card-title">{{sub.subNick}}</span>
               </div>
-              <div class="col m2 s2 titlebtn right">
+              <div class="col m3 s3 titlebtn right">
                 <router-link :to="{ name: 'EditSubject', params: { sub_id : sub.id}}">
                   <i class="material-icons white-text">edit</i>
                 </router-link>&nbsp; &nbsp;
