@@ -2,12 +2,12 @@
   <div>
     <div class="row navbar-fixed">
       <nav>
-        <a href="#" data-target="slide-out" class="sidenav-trigger" :aria-hidden="but">
+        <a v-if="user" href="#" data-target="slide-out" class="sidenav-trigger" :aria-hidden="but">
           <i class="material-icons">menu</i>
         </a>
         <div class="nav-wrapper">
           <a href="#" class="brand-logo center">Present Sir</a>
-          <a href class="right">
+          <a v-if="user" href class="right">
             <router-link :to="{ name: 'AddSubject', params: {userdata: this.user} }">
               <i class="material-icons navAdd">add</i>
             </router-link>
@@ -33,24 +33,25 @@
           </a>
         </div>
       </li>
-      <li>
+      <li class="sidenav-close">
         <router-link :to="{ name: 'Dashboard', params: {name: this.user} }">Dashboard</router-link>
       </li>
       <li>
         <div class="divider"></div>
       </li>
       <li>
-        <a  class="subheader">Subjects</a>
+        <a class="subheader">Subjects</a>
       </li>
-      <li v-for="(sub,index) in subjects" :key="index"><a href="#" class="waves-effect">{{ sub.subName }}</a></li>
+      <li class="sidenav-close" v-for="(sub,index) in subjects" :key="index">
+        <a href="#" class="waves-effect">{{ sub.subName }}</a>
+      </li>
       <li>
         <div class="divider"></div>
       </li>
-      <li>
+      <li class="sidenav-close">
         <a v-if="user" class="waves-effect" @click="logout">
           <i class="material-icons">exit_to_app</i>Logout
         </a>
-        <a class="waves-effect" v-else-if="!user" @click="login">Login</a>
       </li>
     </ul>
   </div>
@@ -85,46 +86,33 @@ export default {
         .auth()
         .signOut()
         .then(() => {
+          this.subjects = [];
           this.$router.push({ name: "Home" });
         });
-    },
-    login() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      firebase
-        .auth()
-        .signInWithRedirect(provider)
-        .then(result => {
-          this.$router.push({ name: "Dashboard", params: { name: this.user } });
-        })
-        .catch(err => {
-          this.feedback = err.message;
-        });
-      // if (this.name) {
-      //   this.feedback = null;
-      //   this.$router.push({ name: "Dashboard", params: { name: this.name } });
-      // }
     }
   },
   created() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.user = user;
+        console.log(user);
+        let ref = db.collection("subjects");
+        ref.get().then(snapshot => {
+          snapshot.forEach(doc => {
+            if (doc.data().userid == user.uid) {
+              console.log(doc.data());
+              let subject = doc.data();
+              subject.id = doc.id;
+              this.subjects.push(subject);
+            }
+          });
+        });
+
         // console.log(user);
-        this.$router.push({ name: "Dashboard", params: { name: this.user } });
+        // this.$router.push({ name: "Dashboard", params: { name: this.user } });
       } else {
         this.user = null;
-      }
-    });
-    //fetch data from firestone
-    let ref = db.collection("subjects");
-    ref.get().then(snapshot => {
-      snapshot.forEach(doc => {
-        if (doc.data().userid == this.user.uid) {
-          let subject = doc.data();
-          subject.id = doc.id;
-          this.subjects.push(subject);
-        }
-      });
+       }
     });
   }
 };
@@ -136,7 +124,8 @@ nav {
 .col {
   padding: 0;
 }
-.name, .email {
+.name,
+.email {
   color: rgb(24, 103, 192);
 }
 nav i.material-icons.navAdd {
@@ -147,5 +136,9 @@ nav i.material-icons.navAdd {
   .sidenav-trigger {
     display: block;
   }
+}
+.row.navbar-fixed {
+  margin: 0;
+  padding: 0;
 }
 </style>
