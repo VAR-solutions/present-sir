@@ -1,7 +1,7 @@
 <template>
   <div class="add-subject container">
     <div class="title">
-      <h2 class="center-align title">Add a Subject</h2>
+      <h2 class="center-align">Add a Subject</h2>
     </div>
     <div class="addform center">
       <form @submit.prevent="addSubject">
@@ -21,7 +21,7 @@
           <input class="browser-default" type="text" name="subNick" v-model="subNick" required>
           <span class="highlight"></span>
           <span class="bar"></span>
-          <label>Give a Nick Name to your Subject:</label>
+          <label>Nick Name:</label>
         </div>
         <p class="red-text" v-if="feedback">{{ feedback }}</p>
         <div class="input-group">
@@ -49,23 +49,22 @@ export default {
   },
   methods: {
     addSubject() {
-      if (this.subCode || this.subName || this.subNick) {
+      if (this.subCode && this.subName && this.subNick) {
         this.feedback = null;
         let ch = 0;
         let rf = db.collection("users");
-        rf.get()
-          .then(snapshot => {
-            snapshot.forEach(doc => {
-              if (doc.data().userid != this.userdata.uid) {
-                ch = 1;
-              }
-            });
-          })
-          .catch(err => {
-            console.log(err);
+        rf.get().then(snapshot => {
+          snapshot.forEach(doc => {
+            if (doc.data().userid == this.userdata.uid) {
+              ch = 1;
+              console.log("1111111111");
+            }
           });
-        if (ch == 1) {
-          rf.add({
+        });
+        if (ch != 1) {
+          console.log("00000000000");
+          let rfff = db.collection("users")
+          rfff.add({
             userid: this.userdata.uid,
             email: this.userdata.email
           }).catch(err => {
@@ -79,7 +78,8 @@ export default {
             subCode: this.subCode,
             subName: this.subName,
             subNick: this.subNick,
-            Dates: {}
+            presentDates: [],
+            absentDates: []
           })
           .catch(err => {
             console.log(err);
@@ -90,6 +90,8 @@ export default {
               params: { name: this.userdata }
             });
           });
+      } else {
+        this.feedback = "Fill all Details";
       }
     }
   }
@@ -100,6 +102,9 @@ export default {
 .title {
   color: rgb(24, 103, 192);
   padding-bottom: 2%;
+}
+.title h2 {
+  font-family: "Catamaran";
 }
 .addform {
   margin-left: 10%;
@@ -113,7 +118,7 @@ export default {
   text-decoration: none;
   display: inline-block;
   font-size: 1.8em;
-  padding: 3%;
+  padding: 2%;
   width: 250px;
   transition: all 0.5s;
   cursor: pointer;
