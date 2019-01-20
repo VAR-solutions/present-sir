@@ -4,7 +4,7 @@ import Dashboard from '@/components/Dashboard'
 import Home from '@/components/Home'
 import AddSubject from '@/components/AddSubject'
 import EditSubject from '@/components/EditSubject'
-
+import UpdateAttend from '@/components/UpdateAttend'
 Vue.use(Router)
 
 const router = new Router({
@@ -42,9 +42,22 @@ const router = new Router({
       }
     },
     {
-      path: '/edit-subject/:sub_id',
+      path: '/edit-subject',
       name: 'EditSubject',
-      component: EditSubject
+      component: EditSubject,
+      props: true,
+      beforeEnter:(to, from, next) => {
+        if(to.params.sub_id){
+          next()
+        } else{
+          next({name:'Home'})
+        }
+      }
+    },
+    {
+      path: '/update/:sub_id',
+      name: 'UpdateAttend',
+      component: UpdateAttend
     }
   ]
 })

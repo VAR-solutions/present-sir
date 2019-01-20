@@ -2,26 +2,58 @@
   <div class="home">
     <!-- Author Antew7 -->
     <div class="row">
-      <div v-for="(sub,index) in subjects" :key="index" class="col s12 m12 l3">
+      <div v-for="sub in subjects" :key="sub.id" class="col s12 m12 l3">
         <div class="card">
           <div class="card-content white-text">
             <div class="row title">
               <div class="col m9 s9 title-name">
                 <span class="card-title">{{sub.subNick}}</span>
               </div>
-              <div class="col m3 s3 titlebtn right">
-                <router-link :to="{ name: 'EditSubject', params: { sub_id : sub.id}}">
-                  <i class="material-icons white-text">edit</i>
-                </router-link>&nbsp; &nbsp;
-                <i class="material-icons delete" @click="delSubject(sub.id)">delete</i>
+              <div class="col m3 s3 titlebtn">
+                <v-dialog v-model="dialog" width="500" class="right">
+                  <v-btn slot="activator" flat icon color="white">
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+
+                  <v-card>
+                    <v-card-title
+                      class="headline grey lighten-2"
+                      primary-title
+                    >Delete {{sub.subName}}</v-card-title>
+
+                    <v-card-text>Are you sure ?</v-card-text>
+
+                    <v-divider></v-divider>
+
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        class="red-text"
+                        color="primary"
+                        flat
+                        @click="delSubject(sub.id)"
+                      >Delete</v-btn>
+                      <v-btn color="primary" flat @click="dialog = false">Cancel</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </div>
             </div>
-
-            <p>Attendance: 75%</p>
-            <p>Present: 6</p>
+            <p style="tab-size: 4;">
+              Attendance: {{sub.perAttend}} %
+              <br>
+              Present: {{sub.preCount}}
+              <br>
+              Total: {{ sub.totalCount }}
+            </p>
           </div>
           <div class="card-action">
-            <button class="btn">UPDATE ATTENDANCE</button>
+            <button class="btn">
+              <router-link
+                :to="{name: 'UpdateAttend', params: {sub_id: sub.id}}"
+                class="blue-text"
+              >UPDATE ATTENDANCE</router-link>
+            </button>
           </div>
         </div>
       </div>
@@ -43,15 +75,20 @@
 import db from "@/firebase/init";
 import firebase from "firebase/app";
 import AddSubject from "@/components/AddSubject";
+import EditSubject from "@/components/EditSubject";
+import UpdateAttend from "@/components/UpdateAttend";
 
 export default {
   name: "Dashboard",
   props: ["name"],
   components: {
-    AddSubject
+    AddSubject,
+    EditSubject,
+    UpdateAttend
   },
   data() {
     return {
+      dialog: false,
       subjects: []
     };
   },
@@ -61,6 +98,7 @@ export default {
         .doc(id)
         .delete()
         .then(() => {
+          this.dialog = false
           this.subjects = this.subjects.filter(subject => {
             return subject.id != id;
           });
@@ -69,12 +107,30 @@ export default {
   },
   created() {
     //fetch data from firestone
+
     let ref = db.collection("subjects");
     ref.get().then(snapshot => {
       snapshot.forEach(doc => {
         if (doc.data().userid == this.name.uid) {
           let subject = doc.data();
           subject.id = doc.id;
+          let preCount = 0;
+          if (doc.data().presentDates.length > 0) {
+            preCount = doc.data().presentDates.length;
+          }
+          let abCount = 0;
+          if (doc.data().absentDates.length > 0) {
+            abCount = doc.data().absentDates.length;
+          }
+          let totalCount = preCount + abCount;
+          let perAttend = (preCount / (preCount + abCount)) * 100;
+          if (totalCount == 0) {
+            perAttend = 0;
+          }
+          subject.preCount = preCount;
+          subject.abCount = abCount;
+          subject.perAttend = perAttend.toPrecision(4);
+          subject.totalCount = totalCount;
           this.subjects.push(subject);
         }
       });
@@ -106,7 +162,7 @@ export default {
   margin: 0;
   padding: 0;
   height: 100%;
-  padding-top: 5%;
+  padding-top: 1%;
 }
 .card-content {
   margin: 0;
@@ -115,6 +171,7 @@ export default {
 .card-content p {
   padding: 5%;
   color: rgb(24, 103, 192);
+  font-size: 1.2em;
 }
 .btn {
   width: 100%;
@@ -130,12 +187,14 @@ export default {
   padding: 0;
 }
 .blankcard {
+  position: relative;
   padding: 8%;
-  padding-bottom: 12%;
-  margin: 0;
+  padding-top: 10.5%;
+  padding-bottom: 10.5%;
+  margin: 0.5rem 0 1rem 0;
   background-color: rgb(24, 103, 192);
 }
-.blankcard p{
+.blankcard p {
   font-size: 1.5em;
   margin: 0;
   padding: 0;

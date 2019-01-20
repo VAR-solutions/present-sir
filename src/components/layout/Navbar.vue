@@ -19,9 +19,7 @@
     <ul id="slide-out" class="sidenav">
       <li>
         <div v-if="user" class="user-view">
-          <div class="background">
-            <img src="../../assets/texture.jpg">
-          </div>
+          <div class="background"></div>
           <a>
             <img class="circle" :src="user.photoURL">
           </a>
@@ -43,7 +41,7 @@
         <a class="subheader">Subjects</a>
       </li>
       <li class="sidenav-close" v-for="(sub,index) in subjects" :key="index">
-        <a href="#" class="waves-effect">{{ sub.subName }}</a>
+        <router-link :to="{name: 'UpdateAttend', params: {sub_id: sub.id}}">{{ sub.subName }}</router-link>
       </li>
       <li>
         <div class="divider"></div>
@@ -95,29 +93,40 @@ export default {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.user = user;
-        console.log(user);
-        let ref = db.collection("subjects");
-        ref.get().then(snapshot => {
-          snapshot.forEach(doc => {
-            if (doc.data().userid == user.uid) {
-              console.log(doc.data());
-              let subject = doc.data();
-              subject.id = doc.id;
+        // let ref = db.collection("subjects");
+        // ref.get().then(snapshot => {
+        //   snapshot.forEach(doc => {
+        //     if (doc.data().userid == user.uid) {
+        //       let subject = doc.data();
+        //       subject.id = doc.id;
+        //       this.subjects.push(subject);
+        //     }
+        //   });
+        // });
+        db.collection("subjects")
+          .where("userid", "==", user.uid)
+          .onSnapshot(snapshot => {
+            snapshot.docChanges().forEach(change => {
+              if(change.type === "added"){
+              let subject = change.doc.data();
+              subject.id = change.doc.id;
               this.subjects.push(subject);
-            }
+              }
+            });
           });
-        });
-
         // console.log(user);
         // this.$router.push({ name: "Dashboard", params: { name: this.user } });
       } else {
         this.user = null;
-       }
+      }
     });
   }
 };
 </script>
 <style scoped>
+.background {
+  background: rgb(24, 103, 192);
+}
 nav {
   background: rgb(24, 103, 192);
 }
@@ -126,7 +135,7 @@ nav {
 }
 .name,
 .email {
-  color: rgb(24, 103, 192);
+  color: white;
 }
 nav i.material-icons.navAdd {
   font-size: 48px;
