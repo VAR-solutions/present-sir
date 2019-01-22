@@ -26,6 +26,7 @@ import { setupCalendar, Calendar } from "v-calendar";
 import "v-calendar/lib/v-calendar.min.css";
 export default {
   name: "UpdateAttend",
+  props: ['sub_id'],
   components: {
     "v-calendar": Calendar
   },
@@ -104,6 +105,8 @@ export default {
     }
   },
   created() {
+    this.sub_id = this.$route.query.sub_id
+    this.name = this.$route.query.name
     let ref = db.collection("subjects");
     ref.get().then(snapshot => {
       snapshot.forEach(doc => {
@@ -201,9 +204,11 @@ export default {
           })
           .catch(err => {
             console.log(err);
+          }).then(() => {
+            this.$router.push({name: "Dashboard"})
           })
       }
-      // this.$router.push({name: 'Dashboard'})
+      
     }
   }
 };
