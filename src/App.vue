@@ -1,8 +1,8 @@
 <template>
-  <div id="app">
+  <v-app>
     <Navbar/>
     <router-view :key="$route.fullPath"/>
-  </div>
+  </v-app>
 </template>
 
 <script>
@@ -15,7 +15,7 @@ export default {
 }
 </script>
 
-<style>
+<style >
 html, body{
   height: 100%;
   background: #ddd;

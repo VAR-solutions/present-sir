@@ -4,7 +4,7 @@
 
     <div class="parallax1">
       <!-- <button> -->
-      <div class="waves-effect waves-light btn prlx center" v-if="!user" @click="login">
+      <!-- <div class="waves-effect waves-light btn prlx center" v-if="!user" @click="login">
         <div class="googlebtn center">
           <img
             src="https://img.icons8.com/color/48/000000/google-logo.png"
@@ -12,7 +12,7 @@
           >
         </div>
         <div class="sgntex center">Sign in with Google</div>
-      </div>
+      </div> -->
       <!-- </button> -->
     </div>
     <div style>

@@ -4,10 +4,16 @@
       <h2 class="center-align">{{ this.subject.subName}}</h2>
     </div>
     <div class="calendar center">
-      <v-calendar :attributes="attributes" @dayclick="dayClicked" style='width: 80%;' :theme-styles='themeStyles'>
-        <span slot='header-title' slot-scope='{ shortMonthLabel, shortYearLabel }'>
-    {{ shortMonthLabel }} `{{ shortYearLabel }}
-  </span>
+      <v-calendar
+        :attributes="attributes"
+        @dayclick="dayClicked"
+        style="width: 80%;"
+        :theme-styles="themeStyles"
+      >
+        <span
+          slot="header-title"
+          slot-scope="{ shortMonthLabel, shortYearLabel }"
+        >{{ shortMonthLabel }} `{{ shortYearLabel }}</span>
       </v-calendar>
     </div>
     <div class="submitcalendar center">
@@ -26,47 +32,48 @@ import { setupCalendar, Calendar } from "v-calendar";
 import "v-calendar/lib/v-calendar.min.css";
 export default {
   name: "UpdateAttend",
-  props: ['sub_id'],
   components: {
     "v-calendar": Calendar
   },
   data() {
-    const hSpacing = '12px';
+    const hSpacing = "12px";
     return {
+      sub_id: "",
       themeStyles: {
         wrapper: {
           // background: 'linear-gradient(to bottom right, rgb(24, 103, 180), #0d85d9)',
-          background: 'white',
-          color: 'black',
-          border: '0',
-          boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.14), 0 6px 20px 0 rgba(0, 0, 0, 0.13)',
-          borderRadius: '5px',
-          border: '2px solid rgb(24, 103, 192)'
+          background: "white",
+          color: "black",
+          border: "0",
+          boxShadow:
+            "0 4px 8px 0 rgba(0, 0, 0, 0.14), 0 6px 20px 0 rgba(0, 0, 0, 0.13)",
+          borderRadius: "5px",
+          border: "2px solid rgb(24, 103, 192)"
         },
         header: {
-          padding: `20px ${hSpacing}`,
+          padding: `20px ${hSpacing}`
         },
         headerHorizontalDivider: {
-          borderTop: 'solid rgba(255, 255, 255, 0.2) 1px',
-          width: '80%',
+          borderTop: "solid rgba(255, 255, 255, 0.2) 1px",
+          width: "80%"
         },
         weekdays: {
-          color: '#090909', // New color
-          fontWeight: '600', // And bolder font weight
-          padding: `20px ${hSpacing} 5px ${hSpacing}`,
+          color: "#090909", // New color
+          fontWeight: "600", // And bolder font weight
+          padding: `20px ${hSpacing} 5px ${hSpacing}`
         },
         weeks: {
-          padding: `0 ${hSpacing} ${hSpacing} ${hSpacing}`,
+          padding: `0 ${hSpacing} ${hSpacing} ${hSpacing}`
         },
         dayContent: {
-          fontSize: '1.2rem'
+          fontSize: "1.2rem"
         }
       },
       subject: {},
       presentDates: [],
       absentDates: [],
       selectedDay: null, // Add state to store selected day
-      
+
       todos: [
         {
           id: 1,
@@ -105,24 +112,28 @@ export default {
     }
   },
   created() {
-    this.sub_id = this.$route.query.sub_id
-    this.name = this.$route.query.name
+    this.sub_id = this.$route.query.sub_id;
+    this.name = this.$route.query.name;
     let ref = db.collection("subjects");
     ref.get().then(snapshot => {
       snapshot.forEach(doc => {
         if (doc.id == this.$route.params.sub_id) {
           this.subject = doc.data();
           this.subject.id = doc.id;
-          if (doc.data().presentDates.length > 0) {
-            for (var i = 0; i < doc.data().presentDates.length; i++) {
-              this.todos[0].date.push(new Date(doc.data().presentDates[i]));
-              this.presentDates.push(doc.data().presentDates[i]);
+          if (doc.data().presentDates) {
+            if (doc.data().presentDates.length > 0) {
+              for (var i = 0; i < doc.data().presentDates.length; i++) {
+                this.todos[0].date.push(new Date(doc.data().presentDates[i]));
+                this.presentDates.push(doc.data().presentDates[i]);
+              }
             }
           }
-          if (doc.data().absentDates.length > 0) {
-            for (var i = 0; i < doc.data().absentDates.length; i++) {
-              this.todos[1].date.push(new Date(doc.data().absentDates[i]));
-              this.absentDates.push(doc.data().absentDates[i]);
+          if (doc.data().absentDates) {
+            if (doc.data().absentDates.length > 0) {
+              for (var i = 0; i < doc.data().absentDates.length; i++) {
+                this.todos[1].date.push(new Date(doc.data().absentDates[i]));
+                this.absentDates.push(doc.data().absentDates[i]);
+              }
             }
           }
         }
@@ -204,11 +215,11 @@ export default {
           })
           .catch(err => {
             console.log(err);
-          }).then(() => {
-            this.$router.push({name: "Dashboard"})
           })
+          .then(() => {
+            this.$router.push({ name: "Dashboard" });
+          });
       }
-      
     }
   }
 };
@@ -220,7 +231,7 @@ setupCalendar({
 
 <style scoped>
 .title h2 {
-  font-family: 'Catamaran';
+  font-family: "Catamaran";
   color: rgb(24, 103, 192);
   text-transform: capitalize;
 }
@@ -228,7 +239,7 @@ setupCalendar({
   margin: 1%;
   padding: 1%;
 }
-.calendar{
+.calendar {
   margin: 1%;
   padding: 1%;
 }

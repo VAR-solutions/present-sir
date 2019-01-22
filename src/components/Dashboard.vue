@@ -88,7 +88,7 @@ export default {
   data() {
     return {
       dialog: false,
-      name : "",
+      name: "",
       subjects: []
     };
   },
@@ -110,9 +110,9 @@ export default {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.name = user;
-        } else {
+      } else {
         this.name = null;
-        this.$router.push({name: 'Home'})
+        this.$router.push({ name: "Home" });
       }
     });
     let ref = db.collection("subjects");
@@ -122,12 +122,16 @@ export default {
           let subject = doc.data();
           subject.id = doc.id;
           let preCount = 0;
-          if (doc.data().presentDates.length > 0) {
-            preCount = doc.data().presentDates.length;
+          if (doc.data().presentDates) {
+            if (doc.data().presentDates.length > 0) {
+              preCount = doc.data().presentDates.length;
+            }
           }
           let abCount = 0;
-          if (doc.data().absentDates.length > 0) {
-            abCount = doc.data().absentDates.length;
+          if (doc.data().absentDates) {
+            if (doc.data().absentDates.length > 0) {
+              abCount = doc.data().absentDates.length;
+            }
           }
           let totalCount = preCount + abCount;
           let perAttend = (preCount / (preCount + abCount)) * 100;

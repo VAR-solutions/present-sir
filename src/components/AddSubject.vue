@@ -140,7 +140,7 @@ export default {
 input {
   font-family: Avenir;
   font-size: 2em;
-  background: #dddddd;
+
   padding: 10px 10px 10px 5px;
   display: block;
   width: 100%;
