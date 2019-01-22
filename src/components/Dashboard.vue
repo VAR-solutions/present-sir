@@ -11,9 +11,9 @@
               </div>
               <div class="col m3 s3 titlebtn">
                 <v-dialog v-model="dialog" width="500" class="right">
-                  <v-btn slot="activator" flat icon color="white">
+                  <!-- <v-btn slot="activator" flat icon color="white">
                     <v-icon>delete</v-icon>
-                  </v-btn>
+                  </v-btn> -->
 
                   <v-card>
                     <v-card-title
@@ -80,7 +80,6 @@ import UpdateAttend from "@/components/UpdateAttend";
 
 export default {
   name: "Dashboard",
-  props: ["name"],
   components: {
     AddSubject,
     EditSubject,
@@ -89,25 +88,33 @@ export default {
   data() {
     return {
       dialog: false,
+      name : "",
       subjects: []
     };
   },
   methods: {
-    delSubject(id) {
-      db.collection("subjects")
-        .doc(id)
-        .delete()
-        .then(() => {
-          this.dialog = false
-          this.subjects = this.subjects.filter(subject => {
-            return subject.id != id;
-          });
-        });
-    }
+    // delSubject(id) {
+    //   db.collection("subjects")
+    //     .doc(id)
+    //     .delete()
+    //     .then(() => {
+    //       this.dialog = false
+    //       this.subjects = this.subjects.filter(subject => {
+    //         return subject.id != id;
+    //       });
+    //     });
+    // }
   },
-  created() {
+  beforeCreate() {
     //fetch data from firestone
-
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.name = user;
+        } else {
+        this.name = null;
+        this.$router.push({name: 'Home'})
+      }
+    });
     let ref = db.collection("subjects");
     ref.get().then(snapshot => {
       snapshot.forEach(doc => {

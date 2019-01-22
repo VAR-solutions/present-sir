@@ -18,15 +18,7 @@ const router = new Router({
     {
       path: '/dashboard',
       name: 'Dashboard',
-      component: Dashboard,
-      props: true,
-      beforeEnter: (to, from, next) => {
-        if(to.params.name){
-          next()
-        } else{
-          next({ name: 'Home' })
-        }
-      }
+      component: Dashboard
     },
     {
       path: '/add-subject',
@@ -55,9 +47,17 @@ const router = new Router({
       }
     },
     {
-      path: '/update/:sub_id',
+      path: '/update',
       name: 'UpdateAttend',
-      component: UpdateAttend
+      component: UpdateAttend,
+      props: true,
+      beforeEnter: (to, from, next) => {
+        if(to.params.sub_id){
+          next()
+        } else{
+          next({name: 'Dashboard', params: 'name'})
+        }
+      }
     }
   ]
 })

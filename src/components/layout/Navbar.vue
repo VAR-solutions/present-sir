@@ -93,16 +93,6 @@ export default {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.user = user;
-        // let ref = db.collection("subjects");
-        // ref.get().then(snapshot => {
-        //   snapshot.forEach(doc => {
-        //     if (doc.data().userid == user.uid) {
-        //       let subject = doc.data();
-        //       subject.id = doc.id;
-        //       this.subjects.push(subject);
-        //     }
-        //   });
-        // });
         db.collection("subjects")
           .where("userid", "==", user.uid)
           .onSnapshot(snapshot => {
@@ -114,9 +104,7 @@ export default {
               }
             });
           });
-        // console.log(user);
-        // this.$router.push({ name: "Dashboard", params: { name: this.user } });
-      } else {
+        } else {
         this.user = null;
       }
     });

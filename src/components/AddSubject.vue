@@ -51,26 +51,10 @@ export default {
     addSubject() {
       if (this.subCode && this.subName && this.subNick) {
         this.feedback = null;
-        let ch = 0;
         let rf = db.collection("users");
-        rf.get().then(snapshot => {
-          snapshot.forEach(doc => {
-            if (doc.data().userid == this.userdata.uid) {
-              ch = 1;
-              console.log("1111111111");
-            }
-          });
-        });
-        if (ch != 1) {
-          console.log("00000000000");
-          let rfff = db.collection("users")
-          rfff.add({
-            userid: this.userdata.uid,
-            email: this.userdata.email
-          }).catch(err => {
-            console.log(err);
-          });
-        }
+        rf.doc(this.userdata.uid).set({
+          email: this.userdata.email,
+        })
         let ref = db.collection("subjects");
         ref
           .add({

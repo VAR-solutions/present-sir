@@ -7,11 +7,11 @@
       <div class="waves-effect waves-light btn prlx center" v-if="!user" @click="login">
         <div class="googlebtn center">
           <img
-            src="https://img.icons8.com/color/48/000000/google-logo.png" class="material-icons left goog">
+            src="https://img.icons8.com/color/48/000000/google-logo.png"
+            class="material-icons left goog"
+          >
         </div>
-        <div class="sgntex center">
-          Sign in with Google
-        </div>
+        <div class="sgntex center">Sign in with Google</div>
       </div>
       <!-- </button> -->
     </div>
@@ -117,6 +117,13 @@ export default {
       user: null
     };
   },
+  beforeCreate() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.$router.push({ name: "Dashboard" });
+      }
+    });
+  },
   methods: {
     login() {
       const provider = new firebase.auth.GoogleAuthProvider();
@@ -124,10 +131,9 @@ export default {
         .auth()
         .signInWithPopup(provider)
         .then(result => {
-          this.user = result.user
+          this.user = result.user;
           this.$router.push({
-            name: "Dashboard",
-            params: { name: result.user }
+            name: "Dashboard"
           });
         })
         .catch(err => {
@@ -181,11 +187,11 @@ export default {
   width: 280px;
   height: 42px;
 }
-.prlx .googlebtn{
+.prlx .googlebtn {
   margin: 0;
   padding: 0;
 }
-.prlx .sgntex{
+.prlx .sgntex {
   margin: 0;
   padding: 0;
 }
