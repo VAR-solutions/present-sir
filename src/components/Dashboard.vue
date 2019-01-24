@@ -10,10 +10,10 @@
                 <span class="card-title">{{sub.subNick}}</span>
               </div>
               <div class="col m3 s3 titlebtn">
-                <v-dialog v-model="dialog" width="500" class="right">
-                  <!-- <v-btn slot="activator" flat icon color="white">
+                <!-- <v-dialog v-model="dialog" width="500" class="right">
+                  <v-btn slot="activator" flat icon color="white">
                     <v-icon>delete</v-icon>
-                  </v-btn> -->
+                  </v-btn>
 
                   <v-card>
                     <v-card-title
@@ -36,7 +36,7 @@
                       <v-btn color="primary" flat @click="dialog = false">Cancel</v-btn>
                     </v-card-actions>
                   </v-card>
-                </v-dialog>
+                </v-dialog> -->
               </div>
             </div>
             <p style="tab-size: 4;">

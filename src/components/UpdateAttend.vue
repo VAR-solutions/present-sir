@@ -1,8 +1,21 @@
 <template>
   <div class="subject container">
+
     <div class="title">
       <h2 class="center-align">{{ this.subject.subName}}</h2>
     </div>
+    <v-dialog v-model="dialog" persistent max-width="290">
+    <v-btn bottom right fixed fab slot="activator" color="error" dark><v-icon >delete</v-icon></v-btn>
+      <v-card>
+        <v-card-title class="headline">Delete {{ this.subject.subName}}</v-card-title>
+        <v-card-text>Are you sure?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="red-text" color="primary" flat @click="delSubject()">Delete</v-btn>
+          <v-btn color="primary" flat @click="dialog = false">Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <div class="calendar center">
       <v-calendar
         :attributes="attributes"
@@ -39,6 +52,7 @@ export default {
     const hSpacing = "12px";
     return {
       sub_id: "",
+      dialog: false,
       themeStyles: {
         wrapper: {
           // background: 'linear-gradient(to bottom right, rgb(24, 103, 180), #0d85d9)',
@@ -220,7 +234,15 @@ export default {
             this.$router.push({ name: "Dashboard" });
           });
       }
-    }
+    },
+    delSubject() {
+    db.collection("subjects")
+      .doc(this.subject.id)
+      .delete()
+      .then(() => {
+        this.$router.push({ name: "Dashboard" });
+      });
+  }
   }
 };
 

@@ -97,14 +97,20 @@ export default {
           .where("userid", "==", user.uid)
           .onSnapshot(snapshot => {
             snapshot.docChanges().forEach(change => {
-              if(change.type === "added"){
-              let subject = change.doc.data();
-              subject.id = change.doc.id;
-              this.subjects.push(subject);
+              if (change.type === "added") {
+                let subject = change.doc.data();
+                subject.id = change.doc.id;
+                this.subjects.push(subject);
+              }
+              if (change.type === "removed") {
+                let id = change.doc.id
+                this.subjects = this.subjects.filter(subject => {
+                  return subject.id != id;
+                });
               }
             });
           });
-        } else {
+      } else {
         this.user = null;
       }
     });
