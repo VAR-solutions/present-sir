@@ -1,5 +1,7 @@
 # present-sir
 
+[![Join the chat at https://gitter.im/VAR-solutions/present-sir](https://badges.gitter.im/VAR-solutions/present-sir.svg)](https://gitter.im/VAR-solutions/present-sir?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 > A Vue.js project
 
 ## Build Setup
